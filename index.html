@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>タイマー・アラーム</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app {
+      width: 360px;
+      padding: 32px 24px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.4rem;
+      letter-spacing: 0.1em;
+      color: #a78bfa;
+      margin-bottom: 28px;
+    }
+
+    .tabs {
+      display: flex;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      background: #16213e;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #888;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      background: #a78bfa;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* タイマー */
+    .display {
+      text-align: center;
+      font-size: 4rem;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.05em;
+      margin: 20px 0;
+      color: #fff;
+    }
+
+    .display.running { color: #4ade80; }
+    .display.done { color: #f87171; animation: pulse 0.5s infinite alternate; }
+
+    @keyframes pulse {
+      from { opacity: 1; }
+      to   { opacity: 0.4; }
+    }
+
+    .presets {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #a78bfa;
+      background: transparent;
+      color: #a78bfa;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover { background: #a78bfa; color: #fff; }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .time-input {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .time-input label { font-size: 0.75rem; color: #888; }
+
+    .time-input input {
+      width: 72px;
+      padding: 10px 0;
+      text-align: center;
+      background: #16213e;
+      border: 1px solid #334;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1.5rem;
+    }
+
+    .time-input input:focus { outline: none; border-color: #a78bfa; }
+
+    .sep { font-size: 2rem; align-self: flex-end; padding-bottom: 10px; color: #555; }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    button.primary {
+      padding: 12px 32px;
+      border: none;
+      border-radius: 10px;
+      background: #a78bfa;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button.primary:hover { background: #7c3aed; }
+
+    button.secondary {
+      padding: 12px 20px;
+      border: 1px solid #555;
+      border-radius: 10px;
+      background: transparent;
+      color: #aaa;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button.secondary:hover { border-color: #aaa; color: #fff; }
+
+    /* アラーム */
+    .alarm-time-input {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin: 20px 0;
+    }
+
+    .alarm-time-input input {
+      width: 80px;
+      padding: 12px 0;
+      text-align: center;
+      background: #16213e;
+      border: 1px solid #334;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 2rem;
+    }
+
+    .alarm-time-input input:focus { outline: none; border-color: #a78bfa; }
+
+    .alarm-list {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .alarm-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: #16213e;
+      border-radius: 8px;
+      font-size: 1.1rem;
+    }
+
+    .alarm-item .del {
+      background: none;
+      border: none;
+      color: #f87171;
+      cursor: pointer;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .alarm-item.fired { border-left: 3px solid #f87171; animation: pulse 0.5s infinite alternate; }
+
+    .status {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>⏰ タイマー・アラーム</h1>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('timer')">タイマー</div>
+    <div class="tab" onclick="switchTab('alarm')">アラーム</div>
+  </div>
+
+  <!-- タイマー -->
+  <div id="panel-timer" class="panel active">
+    <div id="timer-display" class="display">00:00:00</div>
+
+    <div class="presets">
+      <button class="preset-btn" onclick="setPreset(1)">1分</button>
+      <button class="preset-btn" onclick="setPreset(3)">3分</button>
+      <button class="preset-btn" onclick="setPreset(5)">5分</button>
+      <button class="preset-btn" onclick="setPreset(10)">10分</button>
+      <button class="preset-btn" onclick="setPreset(30)">30分</button>
+    </div>
+
+    <div class="input-row">
+      <div class="time-input">
+        <label>時間</label>
+        <input type="number" id="inp-h" min="0" max="23" value="0">
+      </div>
+      <span class="sep">:</span>
+      <div class="time-input">
+        <label>分</label>
+        <input type="number" id="inp-m" min="0" max="59" value="0">
+      </div>
+      <span class="sep">:</span>
+      <div class="time-input">
+        <label>秒</label>
+        <input type="number" id="inp-s" min="0" max="59" value="0">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="primary" id="timer-btn" onclick="timerToggle()">スタート</button>
+      <button class="secondary" onclick="timerReset()">リセット</button>
+    </div>
+
+    <div class="status" id="timer-status"></div>
+  </div>
+
+  <!-- アラーム -->
+  <div id="panel-alarm" class="panel">
+    <div class="alarm-time-input">
+      <input type="number" id="al-h" min="0" max="23" placeholder="HH" value="">
+      <span class="sep">:</span>
+      <input type="number" id="al-m" min="0" max="59" placeholder="MM" value="">
+    </div>
+
+    <div class="btn-row">
+      <button class="primary" onclick="addAlarm()">アラーム追加</button>
+    </div>
+
+    <div class="alarm-list" id="alarm-list"></div>
+    <div class="status" id="alarm-status"></div>
+  </div>
+</div>
+
+<script>
+// ---- Tab ----
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', ['timer','alarm'][i] === name);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+// ---- Timer ----
+let timerInterval = null;
+let timerRemaining = 0;
+let timerRunning = false;
+
+function setPreset(minutes) {
+  timerStop();
+  document.getElementById('inp-h').value = 0;
+  document.getElementById('inp-m').value = minutes;
+  document.getElementById('inp-s').value = 0;
+  updateTimerDisplay(minutes * 60);
+}
+
+function getTimerSeconds() {
+  const h = parseInt(document.getElementById('inp-h').value) || 0;
+  const m = parseInt(document.getElementById('inp-m').value) || 0;
+  const s = parseInt(document.getElementById('inp-s').value) || 0;
+  return h * 3600 + m * 60 + s;
+}
+
+function formatTime(sec) {
+  const h = String(Math.floor(sec / 3600)).padStart(2, '0');
+  const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
+  const s = String(sec % 60).padStart(2, '0');
+  return `${h}:${m}:${s}`;
+}
+
+function updateTimerDisplay(sec) {
+  const el = document.getElementById('timer-display');
+  el.textContent = formatTime(sec);
+  el.className = 'display' + (timerRunning ? ' running' : sec === 0 && timerRemaining === 0 ? '' : '');
+}
+
+function timerToggle() {
+  if (timerRunning) {
+    timerStop();
+  } else {
+    if (timerRemaining === 0) timerRemaining = getTimerSeconds();
+    if (timerRemaining <= 0) { document.getElementById('timer-status').textContent = '時間を設定してください'; return; }
+    timerRunning = true;
+    document.getElementById('timer-btn').textContent = '一時停止';
+    document.getElementById('timer-status').textContent = '';
+    timerInterval = setInterval(timerTick, 1000);
+    updateTimerDisplay(timerRemaining);
+  }
+}
+
+function timerTick() {
+  timerRemaining--;
+  updateTimerDisplay(timerRemaining);
+  if (timerRemaining <= 0) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timer-btn').textContent = 'スタート';
+    document.getElementById('timer-display').className = 'display done';
+    document.getElementById('timer-status').textContent = '⏰ 時間です！';
+    playBeep();
+    timerRemaining = 0;
+  }
+}
+
+function timerStop() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  document.getElementById('timer-btn').textContent = 'スタート';
+}
+
+function timerReset() {
+  timerStop();
+  timerRemaining = 0;
+  document.getElementById('inp-h').value = 0;
+  document.getElementById('inp-m').value = 0;
+  document.getElementById('inp-s').value = 0;
+  document.getElementById('timer-display').className = 'display';
+  document.getElementById('timer-display').textContent = '00:00:00';
+  document.getElementById('timer-status').textContent = '';
+}
+
+// ---- Alarm ----
+const alarms = [];
+let alarmCheckInterval = setInterval(checkAlarms, 1000);
+
+function addAlarm() {
+  const h = parseInt(document.getElementById('al-h').value);
+  const m = parseInt(document.getElementById('al-m').value);
+  if (isNaN(h) || isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) {
+    document.getElementById('alarm-status').textContent = '正しい時刻を入力してください';
+    return;
+  }
+  const label = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  alarms.push({ h, m, label, fired: false, id: Date.now() });
+  document.getElementById('alarm-status').textContent = '';
+  renderAlarms();
+}
+
+function removeAlarm(id) {
+  const i = alarms.findIndex(a => a.id === id);
+  if (i >= 0) alarms.splice(i, 1);
+  renderAlarms();
+}
+
+function renderAlarms() {
+  const list = document.getElementById('alarm-list');
+  list.innerHTML = '';
+  alarms.forEach(a => {
+    const el = document.createElement('div');
+    el.className = 'alarm-item' + (a.fired ? ' fired' : '');
+    el.innerHTML = `<span>${a.label}</span><button class="del" onclick="removeAlarm(${a.id})">✕</button>`;
+    list.appendChild(el);
+  });
+}
+
+function checkAlarms() {
+  const now = new Date();
+  alarms.forEach(a => {
+    if (!a.fired && now.getHours() === a.h && now.getMinutes() === a.m && now.getSeconds() === 0) {
+      a.fired = true;
+      document.getElementById('alarm-status').textContent = `⏰ ${a.label} のアラームです！`;
+      playBeep();
+      renderAlarms();
+      setTimeout(() => { a.fired = false; renderAlarms(); }, 60000);
+    }
+  });
+}
+
+// ---- Audio ----
+const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playBeep() {
+  const freqs = [880, 1100, 880, 1100];
+  freqs.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = freq;
+    osc.type = 'sine';
+    const start = ctx.currentTime + i * 0.3;
+    gain.gain.setValueAtTime(0.4, start);
+    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.25);
+    osc.start(start);
+    osc.stop(start + 0.25);
+  });
+}
+</script>
+</body>
+</html>
