@@ -8,9 +8,9 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #1a1a2e;
-      color: #eee;
+      font-family: 'Segoe UI', -apple-system, sans-serif;
+      background: #f5f5f7;
+      color: #1a1a1a;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -18,172 +18,303 @@
     }
 
     .app {
-      width: 360px;
-      padding: 32px 24px;
+      width: 380px;
+      padding: 32px 20px 28px;
+      background: #fff;
+      border-radius: 32px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.10);
     }
 
-    h1 {
-      text-align: center;
-      font-size: 1.4rem;
-      letter-spacing: 0.1em;
-      color: #a78bfa;
-      margin-bottom: 28px;
-    }
-
+    /* Tabs */
     .tabs {
       display: flex;
-      border-radius: 10px;
-      overflow: hidden;
+      justify-content: center;
+      gap: 28px;
       margin-bottom: 28px;
-      background: #16213e;
     }
 
     .tab {
-      flex: 1;
-      padding: 10px;
-      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #bbb;
       cursor: pointer;
-      font-size: 0.9rem;
-      color: #888;
+      padding-bottom: 4px;
+      border-bottom: 2px solid transparent;
+      letter-spacing: 0.04em;
       transition: all 0.2s;
     }
 
     .tab.active {
-      background: #a78bfa;
-      color: #fff;
-      font-weight: 600;
+      color: #e53935;
+      border-color: #e53935;
     }
 
     .panel { display: none; }
     .panel.active { display: block; }
 
-    /* タイマー */
-    .display {
-      text-align: center;
-      font-size: 4rem;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.05em;
-      margin: 20px 0;
-      color: #fff;
+    /* Circle */
+    .circle-wrap {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      margin: 0 auto 28px;
     }
 
-    .display.running { color: #4ade80; }
-    .display.done { color: #f87171; animation: pulse 0.5s infinite alternate; }
+    .circle-svg {
+      width: 260px;
+      height: 260px;
+      transform: rotate(-90deg);
+    }
+
+    .circle-bg {
+      fill: none;
+      stroke: #f0f0f0;
+      stroke-width: 6;
+    }
+
+    .circle-tick {
+      fill: none;
+      stroke: #e0e0e0;
+      stroke-width: 2;
+    }
+
+    .circle-progress {
+      fill: none;
+      stroke: #e53935;
+      stroke-width: 6;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.5s linear;
+    }
+
+    .circle-dot {
+      fill: #e53935;
+      transition: all 0.5s linear;
+    }
+
+    .circle-inner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .circle-icon {
+      font-size: 1.3rem;
+      color: #e53935;
+      margin-bottom: 4px;
+    }
+
+    .timer-display {
+      font-size: 4.2rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -2px;
+      color: #e53935;
+      line-height: 1;
+    }
+
+    .timer-display.idle { color: #1a1a1a; }
+    .timer-display.done { animation: pulse 0.6s infinite alternate; }
+
+    .timer-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: #e53935;
+      background: #fff0f0;
+      border-radius: 20px;
+      padding: 3px 12px;
+      margin-top: 6px;
+      display: inline-block;
+    }
 
     @keyframes pulse {
       from { opacity: 1; }
-      to   { opacity: 0.4; }
+      to   { opacity: 0.3; }
     }
 
+    /* Presets */
     .presets {
       display: flex;
       gap: 8px;
       justify-content: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+      margin-bottom: 22px;
     }
 
     .preset-btn {
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1px solid #a78bfa;
-      background: transparent;
-      color: #a78bfa;
+      flex: 1;
+      max-width: 72px;
+      padding: 10px 4px 8px;
+      border-radius: 14px;
+      border: none;
+      background: #f5f5f7;
+      color: #555;
       cursor: pointer;
-      font-size: 0.85rem;
-      transition: all 0.2s;
-    }
-
-    .preset-btn:hover { background: #a78bfa; color: #fff; }
-
-    .input-row {
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1;
+      transition: all 0.15s;
       display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 24px;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
     }
 
-    .time-input {
+    .preset-btn span {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #aaa;
+    }
+
+    .preset-btn.selected {
+      background: #e53935;
+      color: #fff;
+    }
+
+    .preset-btn.selected span { color: rgba(255,255,255,0.8); }
+    .preset-btn:hover:not(.selected) { background: #ffe5e5; color: #e53935; }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+    }
+
+    .ctrl-btn {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 4px;
-    }
-
-    .time-input label { font-size: 0.75rem; color: #888; }
-
-    .time-input input {
-      width: 72px;
-      padding: 10px 0;
-      text-align: center;
-      background: #16213e;
-      border: 1px solid #334;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 1.5rem;
-    }
-
-    .time-input input:focus { outline: none; border-color: #a78bfa; }
-
-    .sep { font-size: 2rem; align-self: flex-end; padding-bottom: 10px; color: #555; }
-
-    .btn-row {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-    }
-
-    button.primary {
-      padding: 12px 32px;
+      background: none;
       border: none;
-      border-radius: 10px;
-      background: #a78bfa;
-      color: #fff;
-      font-size: 1rem;
+      cursor: pointer;
+      color: #888;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
       font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
+      transition: color 0.15s;
     }
 
-    button.primary:hover { background: #7c3aed; }
+    .ctrl-btn:hover { color: #555; }
 
-    button.secondary {
-      padding: 12px 20px;
-      border: 1px solid #555;
-      border-radius: 10px;
-      background: transparent;
-      color: #aaa;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
+    .ctrl-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #f5f5f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
     }
 
-    button.secondary:hover { border-color: #aaa; color: #fff; }
+    .play-btn {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #e53935;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(229,57,53,0.4);
+      transition: all 0.15s;
+    }
 
-    /* アラーム */
-    .alarm-time-input {
+    .play-btn:hover { background: #c62828; box-shadow: 0 6px 24px rgba(229,57,53,0.5); }
+    .play-btn:active { transform: scale(0.95); }
+
+    .play-btn svg { width: 28px; height: 28px; fill: #fff; }
+
+    /* Custom input */
+    .custom-input {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 6px;
-      margin: 20px 0;
+      gap: 4px;
+      margin-bottom: 20px;
     }
 
-    .alarm-time-input input {
+    .time-field {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .time-field label {
+      font-size: 0.6rem;
+      color: #bbb;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    .time-field input {
+      width: 60px;
+      padding: 6px 0;
+      text-align: center;
+      background: #f5f5f7;
+      border: 1.5px solid transparent;
+      border-radius: 10px;
+      color: #1a1a1a;
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: border-color 0.2s;
+    }
+
+    .time-field input:focus { outline: none; border-color: #e53935; }
+
+    .sep { font-size: 1.4rem; font-weight: 300; color: #ccc; align-self: flex-end; padding-bottom: 6px; }
+
+    /* ---- Alarm ---- */
+    .alarm-wrap { padding: 0 4px; }
+
+    .alarm-time-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin: 16px 0 20px;
+    }
+
+    .alarm-time-row input {
       width: 80px;
       padding: 12px 0;
       text-align: center;
-      background: #16213e;
-      border: 1px solid #334;
-      border-radius: 8px;
-      color: #fff;
+      background: #f5f5f7;
+      border: 1.5px solid transparent;
+      border-radius: 14px;
+      color: #1a1a1a;
       font-size: 2rem;
+      font-weight: 700;
     }
 
-    .alarm-time-input input:focus { outline: none; border-color: #a78bfa; }
+    .alarm-time-row input:focus { outline: none; border-color: #e53935; }
+
+    .add-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      background: #e53935;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      box-shadow: 0 4px 16px rgba(229,57,53,0.3);
+      transition: background 0.15s;
+    }
+
+    .add-btn:hover { background: #c62828; }
 
     .alarm-list {
-      margin-top: 20px;
+      margin-top: 16px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -195,95 +326,144 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 14px;
-      background: #16213e;
-      border-radius: 8px;
-      font-size: 1.1rem;
+      padding: 12px 16px;
+      background: #f5f5f7;
+      border-radius: 12px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .alarm-item.fired {
+      background: #fff0f0;
+      border-left: 3px solid #e53935;
+      animation: pulse 0.6s infinite alternate;
     }
 
     .alarm-item .del {
       background: none;
       border: none;
-      color: #f87171;
+      color: #ccc;
       cursor: pointer;
-      font-size: 1.2rem;
-      line-height: 1;
+      font-size: 1.1rem;
     }
 
-    .alarm-item.fired { border-left: 3px solid #f87171; animation: pulse 0.5s infinite alternate; }
+    .alarm-item .del:hover { color: #e53935; }
 
     .status {
       text-align: center;
-      font-size: 0.85rem;
-      color: #888;
-      margin-top: 16px;
+      font-size: 0.82rem;
+      color: #e53935;
+      margin-top: 12px;
+      font-weight: 600;
+      min-height: 18px;
     }
   </style>
 </head>
 <body>
 <div class="app">
-  <h1>⏰ タイマー・アラーム</h1>
-
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('timer')">タイマー</div>
-    <div class="tab" onclick="switchTab('alarm')">アラーム</div>
+    <div class="tab active" onclick="switchTab('timer')">TIMER</div>
+    <div class="tab" onclick="switchTab('alarm')">ALARM</div>
   </div>
 
-  <!-- タイマー -->
+  <!-- Timer -->
   <div id="panel-timer" class="panel active">
-    <div id="timer-display" class="display">00:00:00</div>
-
-    <div class="presets">
-      <button class="preset-btn" onclick="setPreset(1)">1分</button>
-      <button class="preset-btn" onclick="setPreset(3)">3分</button>
-      <button class="preset-btn" onclick="setPreset(5)">5分</button>
-      <button class="preset-btn" onclick="setPreset(10)">10分</button>
-      <button class="preset-btn" onclick="setPreset(30)">30分</button>
+    <div class="circle-wrap">
+      <svg class="circle-svg" viewBox="0 0 260 260">
+        <!-- tick marks -->
+        <g id="ticks"></g>
+        <circle class="circle-bg" cx="130" cy="130" r="118"/>
+        <circle class="circle-progress" id="progress-ring" cx="130" cy="130" r="118"
+          stroke-dasharray="741.4" stroke-dashoffset="0"/>
+        <circle class="circle-dot" id="progress-dot" cx="248" cy="130" r="5"/>
+      </svg>
+      <div class="circle-inner">
+        <div class="circle-icon">⏱</div>
+        <div class="timer-display idle" id="timer-display">25:00</div>
+        <div class="timer-label" id="timer-label">FOCUS SESSION</div>
+      </div>
     </div>
 
-    <div class="input-row">
-      <div class="time-input">
-        <label>時間</label>
+    <div class="presets">
+      <button class="preset-btn" onclick="setPreset(5,this)">5<span>MIN</span></button>
+      <button class="preset-btn" onclick="setPreset(15,this)">15<span>MIN</span></button>
+      <button class="preset-btn selected" onclick="setPreset(25,this)">25<span>MIN</span></button>
+      <button class="preset-btn" onclick="setPreset(60,this)">60<span>MIN</span></button>
+    </div>
+
+    <div class="custom-input">
+      <div class="time-field">
+        <label>HR</label>
         <input type="number" id="inp-h" min="0" max="23" value="0">
       </div>
       <span class="sep">:</span>
-      <div class="time-input">
-        <label>分</label>
-        <input type="number" id="inp-m" min="0" max="59" value="0">
+      <div class="time-field">
+        <label>MIN</label>
+        <input type="number" id="inp-m" min="0" max="59" value="25">
       </div>
       <span class="sep">:</span>
-      <div class="time-input">
-        <label>秒</label>
+      <div class="time-field">
+        <label>SEC</label>
         <input type="number" id="inp-s" min="0" max="59" value="0">
       </div>
     </div>
 
-    <div class="btn-row">
-      <button class="primary" id="timer-btn" onclick="timerToggle()">スタート</button>
-      <button class="secondary" onclick="timerReset()">リセット</button>
+    <div class="controls">
+      <button class="ctrl-btn" onclick="timerReset()">
+        <div class="ctrl-icon">↺</div>
+        RESET
+      </button>
+      <button class="play-btn" id="play-btn" onclick="timerToggle()">
+        <svg id="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button class="ctrl-btn" id="pause-btn" onclick="timerToggle()" style="opacity:0.4;pointer-events:none;">
+        <div class="ctrl-icon">⏸</div>
+        PAUSE
+      </button>
     </div>
 
     <div class="status" id="timer-status"></div>
   </div>
 
-  <!-- アラーム -->
+  <!-- Alarm -->
   <div id="panel-alarm" class="panel">
-    <div class="alarm-time-input">
-      <input type="number" id="al-h" min="0" max="23" placeholder="HH" value="">
-      <span class="sep">:</span>
-      <input type="number" id="al-m" min="0" max="59" placeholder="MM" value="">
+    <div class="alarm-wrap">
+      <div class="alarm-time-row">
+        <input type="number" id="al-h" min="0" max="23" placeholder="HH">
+        <span class="sep">:</span>
+        <input type="number" id="al-m" min="0" max="59" placeholder="MM">
+      </div>
+      <button class="add-btn" onclick="addAlarm()">アラーム追加</button>
+      <div class="alarm-list" id="alarm-list"></div>
+      <div class="status" id="alarm-status"></div>
     </div>
-
-    <div class="btn-row">
-      <button class="primary" onclick="addAlarm()">アラーム追加</button>
-    </div>
-
-    <div class="alarm-list" id="alarm-list"></div>
-    <div class="status" id="alarm-status"></div>
   </div>
 </div>
 
 <script>
+// ---- Ticks ----
+(function() {
+  const g = document.getElementById('ticks');
+  const cx = 130, cy = 130, r = 118;
+  for (let i = 0; i < 60; i++) {
+    const angle = (i / 60) * 2 * Math.PI - Math.PI / 2;
+    const isMajor = i % 5 === 0;
+    const r1 = r + (isMajor ? 8 : 5);
+    const r2 = r + 2;
+    const x1 = cx + r1 * Math.cos(angle);
+    const y1 = cy + r1 * Math.sin(angle);
+    const x2 = cx + r2 * Math.cos(angle);
+    const y2 = cy + r2 * Math.sin(angle);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    line.setAttribute('stroke', isMajor ? '#ccc' : '#e8e8e8');
+    line.setAttribute('stroke-width', isMajor ? '2' : '1');
+    g.appendChild(line);
+  }
+})();
+
 // ---- Tab ----
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach((t, i) => {
@@ -294,86 +474,128 @@ function switchTab(name) {
 }
 
 // ---- Timer ----
-let timerInterval = null;
-let timerRemaining = 0;
+const CIRCUMFERENCE = 2 * Math.PI * 118; // 741.4
+let timerTotal = 25 * 60;
+let timerRemaining = 25 * 60;
 let timerRunning = false;
+let timerInterval = null;
 
-function setPreset(minutes) {
-  timerStop();
+function setPreset(minutes, btn) {
+  if (timerRunning) return;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+  if (btn) btn.classList.add('selected');
+  timerTotal = minutes * 60;
+  timerRemaining = timerTotal;
   document.getElementById('inp-h').value = 0;
-  document.getElementById('inp-m').value = minutes;
+  document.getElementById('inp-m').value = minutes >= 60 ? Math.floor(minutes/60) : minutes;
   document.getElementById('inp-s').value = 0;
-  updateTimerDisplay(minutes * 60);
+  if (minutes >= 60) {
+    document.getElementById('inp-h').value = Math.floor(minutes / 60);
+    document.getElementById('inp-m').value = minutes % 60;
+  }
+  updateDisplay(timerRemaining);
+  updateRing(timerRemaining, timerTotal);
 }
 
-function getTimerSeconds() {
+function getInputSeconds() {
   const h = parseInt(document.getElementById('inp-h').value) || 0;
   const m = parseInt(document.getElementById('inp-m').value) || 0;
   const s = parseInt(document.getElementById('inp-s').value) || 0;
   return h * 3600 + m * 60 + s;
 }
 
-function formatTime(sec) {
-  const h = String(Math.floor(sec / 3600)).padStart(2, '0');
-  const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
-  const s = String(sec % 60).padStart(2, '0');
-  return `${h}:${m}:${s}`;
+function formatMMSS(sec) {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
-function updateTimerDisplay(sec) {
+function updateDisplay(sec) {
   const el = document.getElementById('timer-display');
-  el.textContent = formatTime(sec);
-  el.className = 'display' + (timerRunning ? ' running' : sec === 0 && timerRemaining === 0 ? '' : '');
+  el.textContent = formatMMSS(sec);
+}
+
+function updateRing(remaining, total) {
+  const pct = total > 0 ? remaining / total : 1;
+  const offset = CIRCUMFERENCE * (1 - pct);
+  document.getElementById('progress-ring').style.strokeDashoffset = offset;
+
+  const angle = (1 - pct) * 2 * Math.PI - Math.PI / 2;
+  const cx = 130, cy = 130, r = 118;
+  const dx = cx + r * Math.cos(angle);
+  const dy = cy + r * Math.sin(angle);
+  const dot = document.getElementById('progress-dot');
+  dot.setAttribute('cx', dx);
+  dot.setAttribute('cy', dy);
 }
 
 function timerToggle() {
   if (timerRunning) {
-    timerStop();
+    timerPause();
   } else {
-    if (timerRemaining === 0) timerRemaining = getTimerSeconds();
-    if (timerRemaining <= 0) { document.getElementById('timer-status').textContent = '時間を設定してください'; return; }
-    timerRunning = true;
-    document.getElementById('timer-btn').textContent = '一時停止';
-    document.getElementById('timer-status').textContent = '';
-    timerInterval = setInterval(timerTick, 1000);
-    updateTimerDisplay(timerRemaining);
+    if (timerRemaining === 0 || timerRemaining === timerTotal) {
+      const sec = getInputSeconds();
+      if (sec <= 0) { document.getElementById('timer-status').textContent = '時間を設定してください'; return; }
+      timerTotal = sec;
+      timerRemaining = sec;
+    }
+    timerStart();
   }
 }
 
-function timerTick() {
-  timerRemaining--;
-  updateTimerDisplay(timerRemaining);
-  if (timerRemaining <= 0) {
-    clearInterval(timerInterval);
-    timerRunning = false;
-    document.getElementById('timer-btn').textContent = 'スタート';
-    document.getElementById('timer-display').className = 'display done';
-    document.getElementById('timer-status').textContent = '⏰ 時間です！';
-    playBeep();
-    timerRemaining = 0;
-  }
+function timerStart() {
+  timerRunning = true;
+  document.getElementById('timer-display').className = 'timer-display';
+  document.getElementById('timer-status').textContent = '';
+  document.getElementById('pause-btn').style.opacity = '1';
+  document.getElementById('pause-btn').style.pointerEvents = 'auto';
+  // play icon → stop icon
+  document.getElementById('play-icon').innerHTML = '<path d="M6 6h4v12H6zm8 0h4v12h-4z"/>';
+  timerInterval = setInterval(() => {
+    timerRemaining--;
+    updateDisplay(timerRemaining);
+    updateRing(timerRemaining, timerTotal);
+    if (timerRemaining <= 0) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      document.getElementById('timer-display').className = 'timer-display done';
+      document.getElementById('timer-label').textContent = 'TIME\'S UP!';
+      document.getElementById('timer-status').textContent = '完了しました！';
+      document.getElementById('play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      document.getElementById('pause-btn').style.opacity = '0.4';
+      document.getElementById('pause-btn').style.pointerEvents = 'none';
+      playChime();
+    }
+  }, 1000);
 }
 
-function timerStop() {
+function timerPause() {
   clearInterval(timerInterval);
   timerRunning = false;
-  document.getElementById('timer-btn').textContent = 'スタート';
+  document.getElementById('play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+  document.getElementById('pause-btn').style.opacity = '0.4';
+  document.getElementById('pause-btn').style.pointerEvents = 'none';
 }
 
 function timerReset() {
-  timerStop();
-  timerRemaining = 0;
-  document.getElementById('inp-h').value = 0;
-  document.getElementById('inp-m').value = 0;
-  document.getElementById('inp-s').value = 0;
-  document.getElementById('timer-display').className = 'display';
-  document.getElementById('timer-display').textContent = '00:00:00';
+  timerPause();
+  timerRemaining = timerTotal;
+  document.getElementById('timer-display').className = 'timer-display idle';
+  document.getElementById('timer-label').textContent = 'FOCUS SESSION';
   document.getElementById('timer-status').textContent = '';
+  updateDisplay(timerRemaining);
+  updateRing(timerRemaining, timerTotal);
 }
+
+// init
+updateDisplay(timerRemaining);
+updateRing(timerRemaining, timerTotal);
 
 // ---- Alarm ----
 const alarms = [];
-let alarmCheckInterval = setInterval(checkAlarms, 1000);
+setInterval(checkAlarms, 1000);
 
 function addAlarm() {
   const h = parseInt(document.getElementById('al-h').value);
@@ -411,30 +633,33 @@ function checkAlarms() {
     if (!a.fired && now.getHours() === a.h && now.getMinutes() === a.m && now.getSeconds() === 0) {
       a.fired = true;
       document.getElementById('alarm-status').textContent = `⏰ ${a.label} のアラームです！`;
-      playBeep();
+      playChime();
       renderAlarms();
       setTimeout(() => { a.fired = false; renderAlarms(); }, 60000);
     }
   });
 }
 
-// ---- Audio ----
-const ctx = new (window.AudioContext || window.webkitAudioContext)();
+// ---- Sound: iPhone-like chime (2 回) ----
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-function playBeep() {
-  const freqs = [880, 1100, 880, 1100];
-  freqs.forEach((freq, i) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.value = freq;
-    osc.type = 'sine';
-    const start = ctx.currentTime + i * 0.3;
-    gain.gain.setValueAtTime(0.4, start);
-    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.25);
-    osc.start(start);
-    osc.stop(start + 0.25);
+function playChime() {
+  [0, 0.6].forEach(startDelay => {
+    // 高い正弦波 + 高次倍音で透明感を出す
+    [[1047, 1.0], [2093, 0.4], [3136, 0.15]].forEach(([freq, gain]) => {
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const t = audioCtx.currentTime + startDelay;
+      gainNode.gain.setValueAtTime(0, t);
+      gainNode.gain.linearRampToValueAtTime(0.18 * gain, t + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+      osc.start(t);
+      osc.stop(t + 0.45);
+    });
   });
 }
 </script>
