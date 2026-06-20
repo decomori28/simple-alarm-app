@@ -132,8 +132,8 @@
       color: #666;
       cursor: pointer;
       font-weight: 700;
-      font-size: 0.75em;
-      padding: 5px 14px;
+      font-size: 0.88em;
+      padding: 7px 18px;
       letter-spacing: 0.04em;
       transition: all 0.15s;
     }
@@ -157,22 +157,22 @@
     }
 
     .time-field label {
-      font-size: 0.55em;
+      font-size: 0.65em;
       font-weight: 700;
       letter-spacing: 0.08em;
       color: #bbb;
     }
 
     .time-field input {
-      width: 52px;
+      width: 60px;
       text-align: center;
       background: #f5f5f7;
       border: 1.5px solid transparent;
       border-radius: 8px;
       color: #1a1a1a;
       font-weight: 700;
-      font-size: 0.8em;
-      padding: 5px 0;
+      font-size: 0.95em;
+      padding: 6px 0;
       transition: border-color 0.2s;
     }
 
@@ -196,7 +196,7 @@
       border: none;
       cursor: pointer;
       color: #aaa;
-      font-size: 0.55em;
+      font-size: 0.68em;
       font-weight: 700;
       letter-spacing: 0.1em;
       transition: color 0.15s;
@@ -205,7 +205,7 @@
     .act-btn:hover { color: #666; }
 
     .act-icon {
-      width: 36px; height: 36px;
+      width: 44px; height: 44px;
       border-radius: 50%;
       background: #f5f5f7;
       display: flex; align-items: center; justify-content: center;
@@ -213,7 +213,7 @@
     }
 
     .play-btn {
-      width: 52px; height: 52px;
+      width: 62px; height: 62px;
       border-radius: 50%;
       background: #e53935;
       border: none;
@@ -413,7 +413,7 @@ function sizeDisplay() {
   const W = stage.clientWidth;
   const H = stage.clientHeight;
   // タイマー表示: ステージ幅の約30%（最大でHの45%）
-  const fs = Math.min(W * 0.28, H * 0.45);
+  const fs = Math.min(W * 0.38, H * 0.46);
   document.getElementById('timer-display').style.fontSize = fs + 'px';
 }
 
@@ -585,10 +585,16 @@ function playBeep(startTime) {
 
 function playChime() {
   const t = audioCtx.currentTime;
-  const bi = 0.18;
-  const si = 0.85;
+  const bi = 0.18;   // ビープ間隔
+  const si = 0.85;   // セット内グループ間隔
+  const gi = 1.8;    // セット間隔
+  // 1セット目
   playBeep(t); playBeep(t + bi); playBeep(t + bi * 2);
   playBeep(t + si); playBeep(t + si + bi); playBeep(t + si + bi * 2);
+  // 2セット目
+  const t2 = t + si + bi * 2 + gi;
+  playBeep(t2); playBeep(t2 + bi); playBeep(t2 + bi * 2);
+  playBeep(t2 + si); playBeep(t2 + si + bi); playBeep(t2 + si + bi * 2);
 }
 </script>
 </body>
