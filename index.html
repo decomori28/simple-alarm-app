@@ -8,281 +8,235 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
-      width: 100%;
-      height: 100%;
-      background: #f0f0f2;
+      width: 100%; height: 100%;
+      background: #e8e8ea;
       font-family: 'Segoe UI', -apple-system, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
 
-    /* 16:9 container */
+    /* 16:9 stage */
     .stage {
-      position: relative;
       width: min(100vw, 177.78vh);
       height: min(100vh, 56.25vw);
       background: #fff;
-      box-shadow: 0 12px 64px rgba(0,0,0,0.12);
+      box-shadow: 0 8px 48px rgba(0,0,0,0.14);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
-    /* Header */
-    .header {
+    /* ===== TIMER PANEL ===== */
+    #panel-timer {
+      flex: 1;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      padding: 4% 6% 3%;
+    }
+
+    #panel-alarm { display: none; }
+    #panel-alarm.active { display: flex; flex: 1; flex-direction: column; padding: 4% 8% 3%; justify-content: center; }
+
+    /* Tabs row */
+    .topbar {
+      display: flex;
       justify-content: space-between;
-      padding: 2.4% 4% 0;
+      align-items: center;
+      margin-bottom: 3%;
       flex-shrink: 0;
     }
 
-    .app-title {
-      font-size: 1.1em;
-      font-weight: 700;
-      color: #e53935;
-      letter-spacing: 0.08em;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 2em;
-    }
+    .tabs { display: flex; gap: 1.6em; }
 
     .tab {
-      font-size: 0.85em;
+      font-size: 0.8em;
       font-weight: 700;
-      color: #bbb;
+      color: #ccc;
       cursor: pointer;
       padding-bottom: 3px;
       border-bottom: 2px solid transparent;
       letter-spacing: 0.1em;
       transition: all 0.2s;
     }
-
     .tab.active { color: #e53935; border-color: #e53935; }
 
-    /* Main layout */
-    .main {
+    .tab-label {
+      font-size: 0.8em;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #ddd;
+    }
+
+    /* BIG TIME DISPLAY */
+    .time-hero {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6%;
-      padding: 2% 6%;
     }
 
-    .panel { display: none; width: 100%; }
-    .panel.active { display: flex; align-items: center; gap: 6%; }
-
-    /* ---- Left: Circle ---- */
-    .circle-col {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    #timer-display {
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: #1a1a1a;
+      /* font-size set by JS */
     }
 
-    .circle-wrap {
-      position: relative;
+    #timer-display.running { color: #e53935; }
+    #timer-display.done { color: #e53935; animation: blink 0.6s infinite alternate; }
+
+    @keyframes blink { from { opacity: 1; } to { opacity: 0.2; } }
+
+    /* Progress bar */
+    .progress-wrap {
+      flex-shrink: 0;
+      margin-bottom: 3%;
     }
 
-    .circle-svg { display: block; }
-
-    .circle-bg { fill: none; stroke: #f0f0f0; stroke-width: 5; }
-    .circle-progress {
-      fill: none;
-      stroke: #e53935;
-      stroke-width: 5;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 0.5s linear;
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: #f0f0f0;
+      border-radius: 99px;
+      overflow: hidden;
     }
-    .circle-dot { fill: #e53935; transition: all 0.5s linear; }
 
-    .circle-inner {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
+    .progress-fill {
+      height: 100%;
+      background: #e53935;
+      border-radius: 99px;
+      transition: width 0.5s linear;
       width: 100%;
     }
 
-    .circle-icon { color: #e53935; margin-bottom: 2%; }
-
-    .timer-display {
-      font-variant-numeric: tabular-nums;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: #e53935;
-      line-height: 1;
-    }
-
-    .timer-display.idle { color: #1a1a1a; }
-    .timer-display.done { animation: blink 0.6s infinite alternate; }
-
-    @keyframes blink { from { opacity: 1; } to { opacity: 0.25; } }
-
-    .timer-label {
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      color: #e53935;
-      background: #fff0f0;
-      border-radius: 99px;
-      display: inline-block;
-      margin-top: 4%;
-    }
-
-    /* ---- Right: Controls ---- */
-    .right-col {
-      flex: 1;
+    /* Bottom controls */
+    .bottom {
+      flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      gap: 5%;
+      gap: 2%;
     }
 
     /* Presets */
     .presets {
       display: flex;
-      gap: 3%;
+      gap: 1.5%;
+      justify-content: center;
     }
 
     .preset-btn {
-      flex: 1;
       border: none;
-      border-radius: 12px;
+      border-radius: 8px;
       background: #f5f5f7;
-      color: #555;
+      color: #666;
       cursor: pointer;
       font-weight: 700;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 8% 0 6%;
+      font-size: 0.75em;
+      padding: 5px 14px;
+      letter-spacing: 0.04em;
       transition: all 0.15s;
-      line-height: 1;
-    }
-
-    .preset-btn span {
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      color: #aaa;
-      margin-top: 4px;
     }
 
     .preset-btn.selected { background: #e53935; color: #fff; }
-    .preset-btn.selected span { color: rgba(255,255,255,0.75); }
     .preset-btn:hover:not(.selected) { background: #ffe5e5; color: #e53935; }
 
-    /* Custom input */
-    .custom-input {
+    /* Custom time inputs */
+    .custom-row {
       display: flex;
       align-items: center;
-      gap: 3%;
+      justify-content: center;
+      gap: 1%;
     }
 
     .time-field {
-      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 2px;
     }
 
     .time-field label {
+      font-size: 0.55em;
       font-weight: 700;
       letter-spacing: 0.08em;
       color: #bbb;
     }
 
     .time-field input {
-      width: 100%;
+      width: 52px;
       text-align: center;
       background: #f5f5f7;
       border: 1.5px solid transparent;
-      border-radius: 10px;
+      border-radius: 8px;
       color: #1a1a1a;
       font-weight: 700;
+      font-size: 0.8em;
+      padding: 5px 0;
       transition: border-color 0.2s;
-      padding: 8% 0;
     }
 
     .time-field input:focus { outline: none; border-color: #e53935; }
+    .sep { font-size: 1em; color: #ccc; font-weight: 300; }
 
-    .sep { font-weight: 300; color: #ccc; }
-
-    /* Controls */
-    .controls {
+    /* Action buttons */
+    .actions {
       display: flex;
       align-items: center;
-      gap: 6%;
+      justify-content: center;
+      gap: 3%;
     }
 
-    .ctrl-btn {
-      flex: 1;
+    .act-btn {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 3px;
       background: none;
       border: none;
       cursor: pointer;
-      color: #888;
+      color: #aaa;
+      font-size: 0.55em;
       font-weight: 700;
       letter-spacing: 0.1em;
       transition: color 0.15s;
     }
 
-    .ctrl-btn:hover { color: #555; }
+    .act-btn:hover { color: #666; }
 
-    .ctrl-icon-wrap {
-      width: 100%;
-      aspect-ratio: 1;
+    .act-icon {
+      width: 36px; height: 36px;
       border-radius: 50%;
       background: #f5f5f7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .play-btn-wrap {
-      flex: 0 0 auto;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4em;
     }
 
     .play-btn {
+      width: 52px; height: 52px;
       border-radius: 50%;
       background: #e53935;
       border: none;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px rgba(229,57,53,0.4);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(229,57,53,0.4);
       transition: all 0.15s;
-      aspect-ratio: 1;
     }
 
     .play-btn:hover { background: #c62828; }
-    .play-btn:active { transform: scale(0.95); }
-    .play-btn svg { fill: #fff; }
+    .play-btn:active { transform: scale(0.94); }
+    .play-btn svg { width: 22px; height: 22px; fill: #fff; }
 
-    .status {
+    .status-msg {
       text-align: center;
+      font-size: 0.7em;
       font-weight: 600;
       color: #e53935;
-      letter-spacing: 0.04em;
       min-height: 1.2em;
+      letter-spacing: 0.04em;
     }
 
-    /* ---- Alarm panel ---- */
-    #panel-alarm.active {
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: center;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
+    /* ===== ALARM PANEL ===== */
     .alarm-time-row {
       display: flex;
       justify-content: center;
@@ -292,235 +246,179 @@
     }
 
     .alarm-time-row input {
-      width: 100px;
+      width: 90px;
       text-align: center;
       background: #f5f5f7;
       border: 1.5px solid transparent;
-      border-radius: 14px;
+      border-radius: 12px;
       color: #1a1a1a;
       font-weight: 700;
+      font-size: 1.8em;
       padding: 10px 0;
     }
 
     .alarm-time-row input:focus { outline: none; border-color: #e53935; }
+    .alarm-sep { font-size: 2em; color: #ccc; }
 
     .add-btn {
       width: 100%;
+      padding: 13px;
       border: none;
-      border-radius: 14px;
+      border-radius: 12px;
       background: #e53935;
       color: #fff;
+      font-size: 0.95em;
       font-weight: 700;
-      letter-spacing: 0.06em;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(229,57,53,0.3);
+      box-shadow: 0 4px 14px rgba(229,57,53,0.3);
       transition: background 0.15s;
-      padding: 14px 0;
     }
 
     .add-btn:hover { background: #c62828; }
 
     .alarm-list {
-      margin-top: 16px;
+      margin-top: 14px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 180px;
       overflow-y: auto;
+      max-height: 200px;
     }
 
     .alarm-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
+      padding: 10px 16px;
       background: #f5f5f7;
-      border-radius: 12px;
+      border-radius: 10px;
+      font-size: 1.1em;
       font-weight: 700;
-      color: #1a1a1a;
     }
 
-    .alarm-item.fired {
-      background: #fff0f0;
-      border-left: 3px solid #e53935;
-      animation: blink 0.6s infinite alternate;
-    }
-
-    .alarm-item .del {
-      background: none; border: none;
-      color: #ccc; cursor: pointer; font-size: 1.1em;
-    }
-
+    .alarm-item.fired { background: #fff0f0; border-left: 3px solid #e53935; animation: blink 0.6s infinite alternate; }
+    .alarm-item .del { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1.1em; }
     .alarm-item .del:hover { color: #e53935; }
+    .alarm-status { text-align: center; font-size: 0.85em; font-weight: 600; color: #e53935; margin-top: 10px; }
   </style>
 </head>
 <body>
 <div class="stage" id="stage">
-  <div class="header">
-    <div class="app-title">⏱ TIMER</div>
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('timer')">TIMER</div>
-      <div class="tab" onclick="switchTab('alarm')">ALARM</div>
-    </div>
-  </div>
 
-  <!-- Timer -->
-  <div id="panel-timer" class="panel active">
-    <!-- Circle -->
-    <div class="circle-col" id="circle-col">
-      <div class="circle-wrap" id="circle-wrap">
-        <svg class="circle-svg" id="circle-svg" viewBox="0 0 300 300">
-          <g id="ticks"></g>
-          <circle class="circle-bg" cx="150" cy="150" r="130"/>
-          <circle class="circle-progress" id="progress-ring" cx="150" cy="150" r="130"
-            stroke-dasharray="816.8" stroke-dashoffset="0"/>
-          <circle class="circle-dot" id="progress-dot" cx="280" cy="150" r="6"/>
-        </svg>
-        <div class="circle-inner" id="circle-inner">
-          <div class="circle-icon" id="ci-icon">⏱</div>
-          <div class="timer-display idle" id="timer-display">01:00</div>
-          <div class="timer-label" id="timer-label">FOCUS SESSION</div>
-        </div>
+  <!-- Timer Panel -->
+  <div id="panel-timer">
+    <div class="topbar">
+      <div class="tab-label">⏱ TIMER</div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('timer')">TIMER</div>
+        <div class="tab" onclick="switchTab('alarm')">ALARM</div>
       </div>
     </div>
 
-    <!-- Right -->
-    <div class="right-col" id="right-col">
-      <div class="presets" id="presets">
-        <button class="preset-btn selected" onclick="setPreset(1,this)">1<span>MIN</span></button>
-        <button class="preset-btn" onclick="setPreset(2,this)">2<span>MIN</span></button>
-        <button class="preset-btn" onclick="setPreset(3,this)">3<span>MIN</span></button>
-        <button class="preset-btn" onclick="setPreset(4,this)">4<span>MIN</span></button>
-        <button class="preset-btn" onclick="setPreset(5,this)">5<span>MIN</span></button>
+    <!-- Big time -->
+    <div class="time-hero">
+      <div id="timer-display">01:00</div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom">
+      <!-- Presets -->
+      <div class="presets">
+        <button class="preset-btn selected" onclick="setPreset(1,this)">1 MIN</button>
+        <button class="preset-btn" onclick="setPreset(2,this)">2 MIN</button>
+        <button class="preset-btn" onclick="setPreset(3,this)">3 MIN</button>
+        <button class="preset-btn" onclick="setPreset(4,this)">4 MIN</button>
+        <button class="preset-btn" onclick="setPreset(5,this)">5 MIN</button>
       </div>
 
-      <div class="custom-input" id="custom-input">
+      <!-- Custom inputs -->
+      <div class="custom-row">
         <div class="time-field">
           <label>HR</label>
           <input type="number" id="inp-h" min="0" max="23" value="0">
         </div>
-        <span class="sep" id="sep1">:</span>
+        <span class="sep">:</span>
         <div class="time-field">
           <label>MIN</label>
           <input type="number" id="inp-m" min="0" max="59" value="1">
         </div>
-        <span class="sep" id="sep2">:</span>
+        <span class="sep">:</span>
         <div class="time-field">
           <label>SEC</label>
           <input type="number" id="inp-s" min="0" max="59" value="0">
         </div>
       </div>
 
-      <div class="controls" id="controls">
-        <button class="ctrl-btn" onclick="timerReset()">
-          <div class="ctrl-icon-wrap" id="reset-icon-wrap">↺</div>
-          <span id="reset-label">RESET</span>
+      <!-- Action buttons -->
+      <div class="actions">
+        <button class="act-btn" onclick="timerReset()">
+          <div class="act-icon">↺</div>
+          <span>RESET</span>
         </button>
-        <div class="play-btn-wrap">
-          <button class="play-btn" id="play-btn" onclick="timerToggle()">
-            <svg id="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          </button>
-        </div>
-        <button class="ctrl-btn" id="pause-btn" onclick="timerToggle()" style="opacity:0.35;pointer-events:none;">
-          <div class="ctrl-icon-wrap" id="pause-icon-wrap">⏸</div>
-          <span id="pause-label">PAUSE</span>
+        <button class="play-btn" id="play-btn" onclick="timerToggle()">
+          <svg id="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <button class="act-btn" id="pause-btn" onclick="timerToggle()" style="opacity:0.35;pointer-events:none;">
+          <div class="act-icon">⏸</div>
+          <span>PAUSE</span>
         </button>
       </div>
 
-      <div class="status" id="timer-status"></div>
+      <div class="status-msg" id="timer-status"></div>
     </div>
   </div>
 
-  <!-- Alarm -->
-  <div id="panel-alarm" class="panel">
+  <!-- Alarm Panel -->
+  <div id="panel-alarm">
+    <div class="topbar">
+      <div class="tab-label">⏰ ALARM</div>
+      <div class="tabs">
+        <div class="tab" onclick="switchTab('timer')">TIMER</div>
+        <div class="tab active" onclick="switchTab('alarm')">ALARM</div>
+      </div>
+    </div>
     <div class="alarm-time-row">
       <input type="number" id="al-h" min="0" max="23" placeholder="HH">
-      <span class="sep" style="font-size:2rem">:</span>
+      <span class="alarm-sep">:</span>
       <input type="number" id="al-m" min="0" max="59" placeholder="MM">
     </div>
     <button class="add-btn" onclick="addAlarm()">アラーム追加</button>
     <div class="alarm-list" id="alarm-list"></div>
-    <div class="status" id="alarm-status"></div>
+    <div class="alarm-status" id="alarm-status"></div>
   </div>
+
 </div>
 
 <script>
-// ---- Responsive sizing ----
-const CIRC_R = 130;
-const CIRCUMFERENCE = 2 * Math.PI * CIRC_R; // 816.8
+// ---- Tab ----
+function switchTab(name) {
+  document.getElementById('panel-timer').style.display = name === 'timer' ? 'flex' : 'none';
+  document.getElementById('panel-alarm').className = name === 'alarm' ? 'active' : '';
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.textContent === name.toUpperCase());
+  });
+  if (name === 'timer') sizeDisplay();
+}
 
-function resize() {
+// ---- Responsive font size ----
+function sizeDisplay() {
   const stage = document.getElementById('stage');
   const W = stage.clientWidth;
   const H = stage.clientHeight;
-
-  // circle: 60% of height
-  const sz = Math.round(H * 0.72);
-  const wrap = document.getElementById('circle-wrap');
-  wrap.style.width = sz + 'px';
-  wrap.style.height = sz + 'px';
-
-  const svg = document.getElementById('circle-svg');
-  svg.style.width = sz + 'px';
-  svg.style.height = sz + 'px';
-
-  // font sizes relative to circle
-  const unit = sz / 300;
-  document.getElementById('ci-icon').style.fontSize = (18 * unit) + 'px';
-  document.getElementById('timer-display').style.fontSize = (80 * unit) + 'px';
-  document.getElementById('timer-label').style.fontSize = (11 * unit) + 'px';
-  document.getElementById('timer-label').style.padding = `${3*unit}px ${14*unit}px`;
-
-  // right col font sizes
-  const rf = H / 540;
-  document.querySelectorAll('.preset-btn').forEach(b => b.style.fontSize = (15*rf) + 'px');
-  document.querySelectorAll('.preset-btn span').forEach(s => s.style.fontSize = (9*rf) + 'px');
-  document.querySelectorAll('.time-field label').forEach(l => l.style.fontSize = (9*rf) + 'px');
-  document.querySelectorAll('.time-field input').forEach(i => i.style.fontSize = (17*rf) + 'px');
-  document.querySelectorAll('.sep').forEach(s => s.style.fontSize = (22*rf) + 'px');
-  document.querySelectorAll('.ctrl-btn span').forEach(s => s.style.fontSize = (9*rf) + 'px');
-  document.querySelectorAll('.ctrl-icon-wrap').forEach(w => { w.style.fontSize = (20*rf) + 'px'; });
-  document.getElementById('play-btn').style.width = (70*rf) + 'px';
-  document.getElementById('play-btn').style.height = (70*rf) + 'px';
-  document.getElementById('play-icon').style.width = (30*rf) + 'px';
-  document.getElementById('play-icon').style.height = (30*rf) + 'px';
-  document.getElementById('timer-status').style.fontSize = (12*rf) + 'px';
-  document.getElementById('alarm-status').style.fontSize = (12*rf) + 'px';
+  // タイマー表示: ステージ幅の約30%（最大でHの45%）
+  const fs = Math.min(W * 0.28, H * 0.45);
+  document.getElementById('timer-display').style.fontSize = fs + 'px';
 }
 
-window.addEventListener('resize', resize);
-// run after layout
-setTimeout(resize, 0);
-
-// ---- Tick marks ----
-(function() {
-  const g = document.getElementById('ticks');
-  const cx = 150, cy = 150, r = CIRC_R;
-  for (let i = 0; i < 60; i++) {
-    const angle = (i / 60) * 2 * Math.PI - Math.PI / 2;
-    const isMajor = i % 5 === 0;
-    const r1 = r + (isMajor ? 10 : 6);
-    const r2 = r + 2;
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', cx + r1 * Math.cos(angle));
-    line.setAttribute('y1', cy + r1 * Math.sin(angle));
-    line.setAttribute('x2', cx + r2 * Math.cos(angle));
-    line.setAttribute('y2', cy + r2 * Math.sin(angle));
-    line.setAttribute('stroke', isMajor ? '#ccc' : '#e8e8e8');
-    line.setAttribute('stroke-width', isMajor ? '2' : '1');
-    g.appendChild(line);
-  }
-})();
-
-// ---- Tab ----
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', ['timer','alarm'][i] === name);
-  });
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
-  if (name === 'timer') setTimeout(resize, 0);
-}
+window.addEventListener('resize', sizeDisplay);
+setTimeout(sizeDisplay, 0);
 
 // ---- Timer ----
 let timerTotal = 60;
@@ -538,9 +436,8 @@ function setPreset(minutes, btn) {
   document.getElementById('inp-m').value = minutes;
   document.getElementById('inp-s').value = 0;
   updateDisplay(timerRemaining);
-  updateRing(timerRemaining, timerTotal);
-  document.getElementById('timer-display').className = 'timer-display idle';
-  document.getElementById('timer-label').textContent = 'FOCUS SESSION';
+  updateBar(timerRemaining, timerTotal);
+  document.getElementById('timer-display').className = '';
   document.getElementById('timer-status').textContent = '';
 }
 
@@ -563,33 +460,25 @@ function updateDisplay(sec) {
   document.getElementById('timer-display').textContent = formatTime(sec);
 }
 
-function updateRing(remaining, total) {
-  const pct = total > 0 ? remaining / total : 1;
-  const offset = CIRCUMFERENCE * (1 - pct);
-  document.getElementById('progress-ring').style.strokeDashoffset = offset;
-  const angle = (1 - pct) * 2 * Math.PI - Math.PI / 2;
-  const cx = 150, cy = 150, r = CIRC_R;
-  document.getElementById('progress-dot').setAttribute('cx', cx + r * Math.cos(angle));
-  document.getElementById('progress-dot').setAttribute('cy', cy + r * Math.sin(angle));
+function updateBar(remaining, total) {
+  const pct = total > 0 ? (remaining / total) * 100 : 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
 }
 
 function timerToggle() {
-  if (timerRunning) {
-    timerPause();
-  } else {
-    if (timerRemaining <= 0 || timerRemaining === timerTotal) {
-      const sec = getInputSeconds();
-      if (sec <= 0) { document.getElementById('timer-status').textContent = '時間を設定してください'; return; }
-      timerTotal = sec;
-      timerRemaining = sec;
-    }
-    timerStart();
+  if (timerRunning) { timerPause(); return; }
+  if (timerRemaining <= 0 || timerRemaining === timerTotal) {
+    const sec = getInputSeconds();
+    if (sec <= 0) { document.getElementById('timer-status').textContent = '時間を設定してください'; return; }
+    timerTotal = sec;
+    timerRemaining = sec;
   }
+  timerStart();
 }
 
 function timerStart() {
   timerRunning = true;
-  document.getElementById('timer-display').className = 'timer-display';
+  document.getElementById('timer-display').className = 'running';
   document.getElementById('timer-status').textContent = '';
   document.getElementById('pause-btn').style.opacity = '1';
   document.getElementById('pause-btn').style.pointerEvents = 'auto';
@@ -597,12 +486,11 @@ function timerStart() {
   timerInterval = setInterval(() => {
     timerRemaining--;
     updateDisplay(timerRemaining);
-    updateRing(timerRemaining, timerTotal);
+    updateBar(timerRemaining, timerTotal);
     if (timerRemaining <= 0) {
       clearInterval(timerInterval);
       timerRunning = false;
-      document.getElementById('timer-display').className = 'timer-display done';
-      document.getElementById('timer-label').textContent = "TIME'S UP!";
+      document.getElementById('timer-display').className = 'done';
       document.getElementById('timer-status').textContent = '完了しました！';
       document.getElementById('play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>';
       document.getElementById('pause-btn').style.opacity = '0.35';
@@ -615,6 +503,7 @@ function timerStart() {
 function timerPause() {
   clearInterval(timerInterval);
   timerRunning = false;
+  document.getElementById('timer-display').className = '';
   document.getElementById('play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>';
   document.getElementById('pause-btn').style.opacity = '0.35';
   document.getElementById('pause-btn').style.pointerEvents = 'none';
@@ -623,15 +512,14 @@ function timerPause() {
 function timerReset() {
   timerPause();
   timerRemaining = timerTotal;
-  document.getElementById('timer-display').className = 'timer-display idle';
-  document.getElementById('timer-label').textContent = 'FOCUS SESSION';
+  document.getElementById('timer-display').className = '';
   document.getElementById('timer-status').textContent = '';
   updateDisplay(timerRemaining);
-  updateRing(timerRemaining, timerTotal);
+  updateBar(timerRemaining, timerTotal);
 }
 
 updateDisplay(timerRemaining);
-updateRing(timerRemaining, timerTotal);
+updateBar(timerRemaining, timerTotal);
 
 // ---- Alarm ----
 const alarms = [];
@@ -641,8 +529,7 @@ function addAlarm() {
   const h = parseInt(document.getElementById('al-h').value);
   const m = parseInt(document.getElementById('al-m').value);
   if (isNaN(h) || isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) {
-    document.getElementById('alarm-status').textContent = '正しい時刻を入力してください';
-    return;
+    document.getElementById('alarm-status').textContent = '正しい時刻を入力してください'; return;
   }
   alarms.push({ h, m, label: `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`, fired: false, id: Date.now() });
   document.getElementById('alarm-status').textContent = '';
@@ -683,13 +570,12 @@ function checkAlarms() {
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playBeep(startTime) {
-  // 三角波：正弦波より少し存在感があり、矩形波より柔らかい
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.connect(gain);
   gain.connect(audioCtx.destination);
   osc.type = 'triangle';
-  osc.frequency.value = 1318.5; // E6 — 明るく短い
+  osc.frequency.value = 1318.5;
   gain.gain.setValueAtTime(0, startTime);
   gain.gain.linearRampToValueAtTime(0.35, startTime + 0.01);
   gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.12);
@@ -699,18 +585,10 @@ function playBeep(startTime) {
 
 function playChime() {
   const t = audioCtx.currentTime;
-  const beepInterval = 0.18; // ビープ間隔
-  const setInterval2 = 0.85; // セット間隔
-
-  // 1セット目: 3回
-  playBeep(t);
-  playBeep(t + beepInterval);
-  playBeep(t + beepInterval * 2);
-
-  // 2セット目: 3回
-  playBeep(t + setInterval2);
-  playBeep(t + setInterval2 + beepInterval);
-  playBeep(t + setInterval2 + beepInterval * 2);
+  const bi = 0.18;
+  const si = 0.85;
+  playBeep(t); playBeep(t + bi); playBeep(t + bi * 2);
+  playBeep(t + si); playBeep(t + si + bi); playBeep(t + si + bi * 2);
 }
 </script>
 </body>
